@@ -1,0 +1,10 @@
+Browser-local OCR runtime
+
+This directory contains redistributed runtime assets used by the image OCR tool:
+
+- Tesseract.js worker and WebAssembly core
+- Simplified Chinese and English Tesseract language data
+
+These assets are provided under the Apache License 2.0. The accompanying
+LICENSE-Apache-2.0.txt contains the license text. Source and version details
+are recorded in capabilities/image-ocr/SOURCES.md.

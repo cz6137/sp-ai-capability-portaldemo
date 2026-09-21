@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "2.1",
+  "kind": "tool",
+  "identity": {
+    "slug": "image-ocr",
+    "name": "图片文字识别",
+    "tagline": "在浏览器本地从截图、扫描页和照片中提取中英文文字",
+    "description": "选择一张图片后在当前浏览器运行 OCR，得到可编辑、可复制和可下载的 Markdown 文本，原图不上传。",
+    "version": "1.0.0",
+    "maintainer": "平台工具接入组",
+    "updatedAt": "2026-09-16",
+    "accent": "#0f766e"
+  },
+  "classification": {
+    "stageIds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "tags": [
+      "OCR",
+      "图片转文字",
+      "中英文",
+      "本地处理"
+    ],
+    "audiences": [
+      "材料整理人员",
+      "项目经理",
+      "文档编制人员"
+    ]
+  },
+  "usage": {
+    "triggers": [
+      "手上只有图片或扫描页，需要提取可编辑文字"
+    ],
+    "scenarios": [
+      "从系统截图中提取提示、配置或段落文字",
+      "从扫描材料或现场照片中获取可继续整理的中英文",
+      "在不上传原图的情况下完成初步转写"
+    ],
+    "inputs": [
+      {
+        "name": "图片",
+        "detail": "方向正确、文字清晰的截图、扫描页或照片",
+        "formats": [
+          "PNG",
+          "JPG",
+          "JPEG",
+          "WEBP",
+          "BMP",
+          "TIF",
+          "TIFF"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "识别文本",
+        "detail": "可在页面编辑、复制或下载的文本",
+        "formats": [
+          "Markdown"
+        ]
+      }
+    ],
+    "workflow": [
+      {
+        "title": "选择图片",
+        "detail": "在浏览器中选择一张本地图片并检查大小和格式。"
+      },
+      {
+        "title": "加载本地模型",
+        "detail": "应用从同一站点加载 OCR Worker、WebAssembly 核心和中英文模型。"
+      },
+      {
+        "title": "图片识别",
+        "detail": "图片仅在当前浏览器内处理，生成文本和平均置信度。"
+      },
+      {
+        "title": "复核与导出",
+        "detail": "对照原图修正误识别，再复制或下载 Markdown。"
+      }
+    ],
+    "quickStart": [
+      "选择一张中英文图片",
+      "等待本地模型加载与识别",
+      "对照原图修正数字和专有名词",
+      "复制或下载识别结果"
+    ]
+  },
+  "quality": {
+    "dimensions": [
+      {
+        "name": "文字完整性",
+        "criteria": "主要段落和行文本没有大范围遗漏",
+        "evidence": "原图与识别结果对照"
+      },
+      {
+        "name": "关键字符准确性",
+        "criteria": "数字、姓名、编号和专有名词经人工确认",
+        "evidence": "用户校对后的文本"
+      }
+    ],
+    "humanReview": [
+      "数字、姓名、编号、专有名词和表格必须对照原图复核"
+    ],
+    "boundaries": [
+      "不还原原图的版式、表格结构和图文坐标",
+      "不适合手写字、艺术字、严重模糊、强透视或大角度旋转图片",
+      "识别结果不是原件证据或正式审核结论"
+    ],
+    "warnings": [
+      {
+        "text": "识别结果不是原件证据，数字、姓名、编号、专有名词和表格必须人工对照原图复核。",
+        "source": {
+          "file": "manual.md",
+          "line": 7
+        }
+      }
+    ]
+  },
+  "delivery": {
+    "mode": "hybrid",
+    "online": {
+      "enabled": true,
+      "route": "/tools/image-ocr",
+      "acceptedExtensions": [
+        "png",
+        "jpg",
+        "jpeg",
+        "webp",
+        "bmp",
+        "tif",
+        "tiff"
+      ],
+      "maxFileSizeMB": 15,
+      "processingLocation": "用户当前浏览器",
+      "externalProviders": [],
+      "retentionPolicy": "图片和识别结果只在当前页面处理，关闭页面后平台不留存",
+      "dataNotice": "图片不上传平台后端或第三方服务"
+    },
+    "package": {
+      "environment": "现有 Vue 前端平台；运行资源由应用静态目录提供",
+      "installGuide": "随平台前端构建与部署；保留 public/ocr 中的 Worker、WebAssembly 和中英文语言模型。",
+      "packageItems": [
+        {
+          "name": "manual.md"
+        },
+        {
+          "name": "SOURCES.md"
+        },
+        {
+          "name": "CHANGELOG.md"
+        }
+      ]
+    }
+  },
+  "governance": {
+    "status": "DRAFT",
+    "changeNote": "1.0.0 首版：新增不上传图片的浏览器本地中英文 OCR，待用真实扫描材料验收识别效果。"
+  },
+  "references": {
+    "manual": "manual.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "provenance": [
+    {
+      "path": "/quality/warnings/0",
+      "status": "EXTRACTED",
+      "source": {
+        "file": "manual.md",
+        "line": 7,
+        "quote": "识别结果不是原件证据，数字、姓名、编号、专有名词和表格必须人工对照原图复核。"
+      }
+    }
+  ],
+  "runtime": {
+    "renderer": "document-transform",
+    "executionMode": "browser-local",
+    "route": "/tools/image-ocr",
+    "fileLimitMB": 15,
+    "securityStatement": "图片和 OCR 识别均在当前浏览器完成，不上传平台后端或第三方服务。",
+    "supportNotes": [
+      "首次使用需从平台站点加载本地 OCR 核心和中英文模型。",
+      "不保留原图的版式和表格结构，复杂材料需人工整理。",
+      "本适配版为待审核草稿，仍需真实业务图片验收。"
+    ],
+    "operations": [
+      {
+        "id": "image-to-markdown",
+        "label": "图片 → 文字",
+        "from": "图片",
+        "to": "Markdown",
+        "hint": "本地识别中英文并导出可编辑文本",
+        "executor": "image-to-markdown",
+        "input": {
+          "kind": "file",
+          "accept": [
+            "png",
+            "jpg",
+            "jpeg",
+            "webp",
+            "bmp",
+            "tif",
+            "tiff"
+          ],
+          "heading": "选择要识别的图片",
+          "description": "请使用方向正确、文字清晰的图片；选择后将立即在当前浏览器识别。"
+        },
+        "output": {
+          "kind": "markdown",
+          "format": "md",
+          "actionLabel": "下载识别文本（.md）"
+        },
+        "notices": [
+          "识别结果需对照原图复核，不要将 OCR 文本直接当作原件证据。"
+        ]
+      }
+    ]
+  }
+}

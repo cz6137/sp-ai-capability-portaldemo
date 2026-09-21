@@ -1,0 +1,14 @@
+{
+  "name": "sp-ai-portal-ima-bridge",
+  "private": true,
+  "version": "1.2.0",
+  "type": "module",
+  "scripts": {
+    "sync": "node src/ima-bridge.mjs",
+    "dry-run": "node src/ima-bridge.mjs --dry-run",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

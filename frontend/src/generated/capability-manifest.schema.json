@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sp.example.internal/schemas/capability-manifest-2.1.json",
+  "title": "统一能力资产清单",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "identity", "classification", "usage", "quality", "delivery", "governance", "references"],
+  "properties": {
+    "schemaVersion": { "enum": ["2.0", "2.1"] },
+    "kind": { "enum": ["skill", "tool"] },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug", "name", "tagline", "description", "version", "maintainer", "updatedAt"],
+      "properties": {
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "name": { "type": "string", "minLength": 2 },
+        "shortName": { "type": "string" },
+        "tagline": { "type": "string", "minLength": 5 },
+        "description": { "type": "string", "minLength": 10 },
+        "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$" },
+        "maintainer": { "type": "string", "minLength": 1 },
+        "updatedAt": { "type": "string", "format": "date" },
+        "accent": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stageIds", "tags", "audiences"],
+      "properties": {
+        "stageIds": { "type": "array", "items": { "type": "integer", "minimum": 0, "maximum": 8 }, "uniqueItems": true },
+        "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "audiences": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenarios", "inputs", "outputs", "workflow", "quickStart"],
+      "properties": {
+        "triggers": { "$ref": "#/$defs/nonEmptyStrings" },
+        "scenarios": { "$ref": "#/$defs/nonEmptyStrings" },
+        "inputs": { "$ref": "#/$defs/items" },
+        "outputs": { "$ref": "#/$defs/items" },
+        "workflow": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/step" } },
+        "quickStart": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimensions", "humanReview", "boundaries"],
+      "properties": {
+        "dimensions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/qualityDimension" } },
+        "humanReview": { "$ref": "#/$defs/nonEmptyStrings" },
+        "boundaries": { "$ref": "#/$defs/nonEmptyStrings" },
+        "warnings": { "type": "array", "items": { "$ref": "#/$defs/warning" } }
+      }
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": { "enum": ["package", "online", "hybrid"] },
+        "package": { "$ref": "#/$defs/packageDelivery" },
+        "online": { "$ref": "#/$defs/onlineDelivery" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "changeNote"],
+      "properties": {
+        "status": { "enum": ["DRAFT", "IN_REVIEW", "PUBLISHED", "ARCHIVED"] },
+        "reviewer": { "type": "string" },
+        "reviewedAt": { "type": "string", "format": "date" },
+        "changeNote": { "type": "string" }
+      }
+    },
+    "references": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "manual": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "faq": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "changelog": { "type": "string", "minLength": 1, "pattern": "\\S" }
+      }
+    },
+    "provenance": { "type": "array", "items": { "$ref": "#/$defs/provenance" } },
+    "runtime": { "$ref": "#/$defs/runtime" }
+  },
+  "allOf": [
+    { "if": { "properties": { "kind": { "const": "skill" } } }, "then": { "properties": { "delivery": { "required": ["package"] } } } },
+    { "if": { "properties": { "kind": { "const": "tool" } } }, "then": { "properties": { "delivery": { "required": ["online"] } } } },
+    { "if": { "properties": { "delivery": { "properties": { "mode": { "const": "package" } } } } }, "then": { "properties": { "delivery": { "required": ["package"] } } } },
+    { "if": { "properties": { "delivery": { "properties": { "mode": { "const": "online" } } } } }, "then": { "properties": { "delivery": { "required": ["online"] } } } },
+    { "if": { "properties": { "delivery": { "properties": { "mode": { "const": "hybrid" } } } } }, "then": { "properties": { "delivery": { "required": ["package", "online"] } } } },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": { "const": "2.1" },
+          "kind": { "const": "tool" },
+          "delivery": { "properties": { "online": { "properties": { "enabled": { "const": true } }, "required": ["enabled"] } }, "required": ["online"] }
+        },
+        "required": ["schemaVersion", "kind", "delivery"]
+      },
+      "then": { "required": ["runtime"] }
+    }
+  ],
+  "$defs": {
+    "nonEmptyStrings": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "item": { "type": "object", "additionalProperties": false, "required": ["name"], "properties": { "name": { "type": "string", "minLength": 1 }, "detail": { "type": "string", "minLength": 1 }, "formats": { "type": "array", "items": { "type": "string" } } } },
+    "items": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/item" } },
+    "step": { "type": "object", "additionalProperties": false, "required": ["title", "detail"], "properties": { "title": { "type": "string", "minLength": 1 }, "detail": { "type": "string", "minLength": 1 } } },
+    "qualityDimension": { "type": "object", "additionalProperties": false, "required": ["name", "criteria", "evidence"], "properties": { "name": { "type": "string", "minLength": 1 }, "criteria": { "type": "string", "minLength": 1 }, "evidence": { "type": "string", "minLength": 1 } } },
+    "sourceLocation": { "type": "object", "additionalProperties": false, "required": ["file"], "properties": { "file": { "type": "string", "minLength": 1 }, "line": { "type": "integer", "minimum": 1 }, "quote": { "type": "string", "minLength": 1 } } },
+    "warning": { "type": "object", "additionalProperties": false, "required": ["text", "source"], "properties": { "text": { "type": "string", "minLength": 1 }, "source": { "$ref": "#/$defs/sourceLocation" }, "level": { "enum": ["NOTICE", "CAUTION", "BLOCKER"] } } },
+    "provenance": { "type": "object", "additionalProperties": false, "required": ["path", "status"], "properties": { "path": { "type": "string", "pattern": "^/" }, "status": { "enum": ["EXTRACTED", "USER_CONFIRMED", "USER_EDITED"] }, "source": { "$ref": "#/$defs/sourceLocation" }, "note": { "type": "string" } } },
+    "packageDelivery": { "type": "object", "additionalProperties": false, "required": ["environment", "installGuide", "packageItems"], "properties": { "environment": { "type": "string", "minLength": 1 }, "installGuide": { "type": "string", "minLength": 1 }, "packageItems": { "type": "array", "items": { "$ref": "#/$defs/item" } } } },
+    "onlineDelivery": { "type": "object", "additionalProperties": false, "required": ["enabled", "acceptedExtensions", "maxFileSizeMB", "processingLocation", "externalProviders", "retentionPolicy", "dataNotice"], "properties": { "enabled": { "type": "boolean" }, "route": { "type": "string" }, "acceptedExtensions": { "type": "array", "items": { "type": "string" } }, "maxFileSizeMB": { "type": "integer", "minimum": 0, "maximum": 500 }, "processingLocation": { "type": "string", "minLength": 1 }, "externalProviders": { "type": "array", "items": { "type": "string" } }, "retentionPolicy": { "type": "string", "minLength": 1 }, "dataNotice": { "type": "string", "minLength": 1 } } },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["renderer", "executionMode", "route", "fileLimitMB", "securityStatement", "supportNotes", "operations"],
+      "properties": {
+        "renderer": { "enum": ["document-transform", "server-job", "external-link"] },
+        "executionMode": { "enum": ["browser-local", "server-job", "external"] },
+        "route": { "type": "string", "minLength": 1 },
+        "fileLimitMB": { "type": "integer", "minimum": 0, "maximum": 500 },
+        "securityStatement": { "type": "string", "minLength": 1 },
+        "supportNotes": { "type": "array", "items": { "type": "string" } },
+        "operations": { "type": "array", "items": { "$ref": "#/$defs/toolOperation" } },
+        "handler": { "type": "string" },
+        "sampleMarkdown": { "type": "string" },
+        "templates": { "type": "array", "items": { "type": "string" } }
+      },
+      "allOf": [
+        { "if": { "properties": { "renderer": { "const": "document-transform" } } }, "then": { "properties": { "operations": { "minItems": 1 } } } },
+        { "if": { "properties": { "renderer": { "const": "server-job" } } }, "then": { "required": ["handler"], "properties": { "handler": { "minLength": 1 } } } }
+      ]
+    },
+    "toolOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "from", "to", "hint", "executor", "input", "output"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "hint": { "type": "string", "minLength": 1 },
+        "executor": { "type": "string", "minLength": 1 },
+        "input": { "type": "object", "additionalProperties": false, "required": ["kind", "accept", "heading", "description"], "properties": { "kind": { "enum": ["markdown", "file"] }, "accept": { "type": "array", "minItems": 1, "items": { "type": "string" } }, "heading": { "type": "string", "minLength": 1 }, "description": { "type": "string", "minLength": 1 } } },
+        "output": { "type": "object", "additionalProperties": false, "required": ["kind", "format", "actionLabel"], "properties": { "kind": { "enum": ["file", "markdown"] }, "format": { "type": "string", "minLength": 1 }, "actionLabel": { "type": "string", "minLength": 1 } } },
+        "notices": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+package com.spai.portal.asset.repository; import com.spai.portal.asset.domain.FileObject;import java.util.Optional;import org.springframework.data.jpa.repository.JpaRepository; public interface FileObjectRepository extends JpaRepository<FileObject,String>{Optional<FileObject> findFirstBySha256AndStatus(String sha256,String status);}

@@ -1,0 +1,1 @@
+package com.spai.portal.asset.repository; import com.spai.portal.asset.domain.AssetVersion;import java.util.*;import org.springframework.data.jpa.repository.JpaRepository; public interface AssetVersionRepository extends JpaRepository<AssetVersion,String>{List<AssetVersion> findByAssetIdOrderByVersionNoDesc(String assetId);}

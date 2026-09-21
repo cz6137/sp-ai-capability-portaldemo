@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "tool",
+  "id": "document-converter",
+  "slug": "document-converter",
+  "name": "文档格式转换器",
+  "tagline": "在浏览器本地完成 Markdown、Word 与 PDF 之间的常用格式转换",
+  "description": "提供 Markdown 转 Word、Markdown 转 PDF、Word 转 Markdown 和 PDF 转 Markdown 四种办公文档转换能力。",
+  "accent": "#a32d2d",
+  "icon": "document",
+  "version": "1.1.0",
+  "updatedAt": "2026-08-26",
+  "maintainer": "平台工具接入组",
+  "maturity": "首版可用",
+  "tags": ["文档转换", "Markdown", "Word", "PDF", "本地处理"],
+  "metrics": [],
+  "inputs": [
+    { "name": "Markdown", "detail": "粘贴内容或选择 .md 文件", "formats": "MD / MARKDOWN / TXT" },
+    { "name": "办公文档", "detail": "文本型 PDF 或 Microsoft Word 文档", "formats": "PDF / DOCX" }
+  ],
+  "outputs": [
+    { "name": "正式文档", "detail": "可编辑 Word 或便于归档打印的 PDF", "formats": "DOCX / PDF" },
+    { "name": "结构化文本", "detail": "可继续编辑并供 AI 工具读取的 Markdown", "formats": "MD" }
+  ],
+  "qualityChecks": [],
+  "boundaries": [
+    "转换在浏览器本地完成，平台服务端不接收和留存文件。",
+    "PDF 转 Markdown 首版仅支持包含可提取文字的 PDF，不提供扫描件 OCR。",
+    "复杂排版、合并单元格、文本框和特殊字体可能需要人工调整。"
+  ],
+  "deployment": {
+    "available": true,
+    "modes": ["平台内置", "浏览器本地执行"],
+    "environment": "现代桌面浏览器",
+    "guide": "随平台前端静态资源部署，不依赖外部转换服务。"
+  },
+  "trial": {
+    "enabled": true,
+    "mode": "browser-local",
+    "prototype": false,
+    "actualFileTransfer": false,
+    "acceptedExtensions": ["md", "markdown", "txt", "docx", "pdf"],
+    "maxFileSizeMB": 20,
+    "retentionHours": 0,
+    "processingLocation": "用户当前浏览器",
+    "externalProviders": [],
+    "requireHumanReview": true,
+    "resultWatermark": "格式转换结果，请检查后使用",
+    "steps": ["选择转换方向", "载入文件或文本", "本地转换", "预览并下载"],
+    "templates": [],
+    "sample": { "fileName": "", "subject": "", "attendees": "", "background": "", "template": "" },
+    "qualityDimensions": []
+  },
+  "runtime": {
+    "renderer": "document-transform",
+    "executionMode": "browser-local",
+    "route": "/tools/document-converter",
+    "fileLimitMB": 20,
+    "securityStatement": "四种转换均在当前浏览器完成。文件不会上传至平台后端或第三方服务；关闭页面后平台不保留文件与转换结果。",
+    "sampleMarkdown": "# 项目周会纪要\n\n> 日期：2026-08-26  \n> 参会人：产品、研发、交付代表\n\n## 本周结论\n\n平台先完成可验证的办公工具，再以真实工具反推统一接入规范。\n\n## 行动项\n\n1. 完成 Markdown、Word 和 PDF 的双向转换。\n2. 使用真实文件检查标题、列表、表格和中文内容。\n3. 转换结果由使用者确认后再进入正式业务流程。\n\n## 进度表\n\n| 事项 | 负责人 | 状态 |\n| --- | --- | --- |\n| 文档转换 | 研发组 | 进行中 |\n| 接入规范 | 平台组 | 待开始 |\n\n> 注意：复杂版式在不同文件格式之间转换时可能需要人工调整。\n",
+    "supportNotes": [
+      "Markdown 导出支持标题、段落、粗斜体、列表、链接、代码块和基础表格。",
+      "Word/PDF 转 Markdown 以保留内容结构为目标，不追求复刻原页面。",
+      "扫描件 OCR、批量转换和自定义 Word 模板暂未纳入首版。"
+    ],
+    "operations": [
+      {
+        "id": "markdown-to-docx",
+        "label": "Markdown → Word",
+        "from": "Markdown",
+        "to": "DOCX",
+        "hint": "生成可继续编辑的标准 .docx 文件",
+        "executor": "markdown-to-docx",
+        "input": {
+          "kind": "markdown",
+          "accept": ["md", "markdown", "txt"],
+          "heading": "输入 Markdown",
+          "description": "粘贴内容或载入本地 Markdown 文件，右侧同步显示实际预览。"
+        },
+        "output": { "kind": "file", "format": "docx", "actionLabel": "下载 Word（.docx）" }
+      },
+      {
+        "id": "markdown-to-pdf",
+        "label": "Markdown → PDF",
+        "from": "Markdown",
+        "to": "PDF",
+        "hint": "按 A4 页面生成便于归档和打印的 PDF",
+        "executor": "markdown-to-pdf",
+        "input": {
+          "kind": "markdown",
+          "accept": ["md", "markdown", "txt"],
+          "heading": "输入 Markdown",
+          "description": "粘贴内容或载入本地 Markdown 文件，右侧同步显示实际预览。"
+        },
+        "output": { "kind": "file", "format": "pdf", "actionLabel": "下载 PDF" }
+      },
+      {
+        "id": "docx-to-markdown",
+        "label": "Word → Markdown",
+        "from": "DOCX",
+        "to": "Markdown",
+        "hint": "提取标题、列表、表格、链接和图片",
+        "executor": "docx-to-markdown",
+        "input": {
+          "kind": "file",
+          "accept": ["docx"],
+          "heading": "上传 DOCX 文件",
+          "description": "选择文件后立即在浏览器内转换，不经过网络上传。"
+        },
+        "output": { "kind": "markdown", "format": "md", "actionLabel": "下载 .md" }
+      },
+      {
+        "id": "pdf-to-markdown",
+        "label": "PDF → Markdown",
+        "from": "PDF",
+        "to": "Markdown",
+        "hint": "提取文本型 PDF 的段落与基础层级",
+        "executor": "pdf-to-markdown",
+        "input": {
+          "kind": "file",
+          "accept": ["pdf"],
+          "heading": "上传 PDF 文件",
+          "description": "选择文件后立即在浏览器内转换，不经过网络上传。"
+        },
+        "output": { "kind": "markdown", "format": "md", "actionLabel": "下载 .md" },
+        "notices": ["当前支持文本型 PDF。扫描件、图片型 PDF 暂不进行 OCR；复杂表格和多栏版式需要人工检查。"]
+      }
+    ]
+  }
+}

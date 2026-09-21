@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.18</version>
+    <relativePath/>
+  </parent>
+  <groupId>com.spai</groupId>
+  <artifactId>sp-ai-portal-parent</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <name>SP AI Portal</name>
+
+  <modules>
+    <module>portal-common</module>
+    <module>portal-organization</module>
+    <module>portal-security</module>
+    <module>portal-asset</module>
+    <module>portal-skill</module>
+    <module>portal-task</module>
+    <module>portal-audit</module>
+    <module>portal-integration</module>
+    <module>portal-web</module>
+  </modules>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jjwt.version>0.11.5</jjwt.version>
+    <springdoc.version>1.7.0</springdoc.version>
+    <poi.version>5.2.5</poi.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency><groupId>com.spai</groupId><artifactId>portal-common</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.spai</groupId><artifactId>portal-organization</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.spai</groupId><artifactId>portal-security</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.spai</groupId><artifactId>portal-asset</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.spai</groupId><artifactId>portal-skill</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.spai</groupId><artifactId>portal-task</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.spai</groupId><artifactId>portal-audit</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>com.spai</groupId><artifactId>portal-integration</artifactId><version>${project.version}</version></dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

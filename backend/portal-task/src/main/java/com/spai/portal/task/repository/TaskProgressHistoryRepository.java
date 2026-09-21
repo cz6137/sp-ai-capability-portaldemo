@@ -1,0 +1,1 @@
+package com.spai.portal.task.repository;import com.spai.portal.task.domain.TaskProgressHistory;import org.springframework.data.jpa.repository.JpaRepository;public interface TaskProgressHistoryRepository extends JpaRepository<TaskProgressHistory,String>{}

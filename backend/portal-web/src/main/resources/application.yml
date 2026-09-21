@@ -1,0 +1,72 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:prod}
+  datasource:
+    url: ${PORTAL_PG_URL:jdbc:postgresql://127.0.0.1:5432/sp_ai_portal}
+    username: ${PORTAL_PG_USERNAME:sp_ai_portal}
+    password: ${PORTAL_PG_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.default_schema: ${PORTAL_PG_SCHEMA:sp_ai_portal}
+  flyway:
+    enabled: true
+    schemas: ${PORTAL_PG_SCHEMA:sp_ai_portal}
+    default-schema: ${PORTAL_PG_SCHEMA:sp_ai_portal}
+    create-schemas: true
+    baseline-on-migrate: true
+  data:
+    mongodb:
+      uri: ${PORTAL_MONGODB_URI:mongodb://127.0.0.1:27017/sp_ai_portal}
+      gridfs:
+        bucket: portal_files
+  servlet:
+    multipart:
+      max-file-size: ${PORTAL_MAX_FILE_SIZE:300MB}
+      max-request-size: ${PORTAL_MAX_REQUEST_SIZE:305MB}
+  jackson:
+    default-property-inclusion: non_null
+server:
+  servlet:
+    context-path: /sp-ai-portal
+  forward-headers-strategy: native
+management:
+  endpoints.web.exposure.include: health,info,metrics
+  endpoint.health.show-details: when_authorized
+portal:
+  jwt:
+    private-key: ${PORTAL_JWT_PRIVATE_KEY:}
+    public-key: ${PORTAL_JWT_PUBLIC_KEY:}
+    access-seconds: 900
+    refresh-seconds: 604800
+  bootstrap:
+    enabled: ${PORTAL_BOOTSTRAP_ENABLED:false}
+    admin-username: ${PORTAL_ADMIN_USERNAME:admin}
+    admin-password: ${PORTAL_ADMIN_PASSWORD:}
+  integration:
+    remote-enabled: ${PORTAL_REMOTE_SYNC_ENABLED:false}
+    ima:
+      base-url: ${PORTAL_IMA_BASE_URL:https://ima.qq.com}
+      client-id: ${PORTAL_IMA_CLIENT_ID:}
+      api-key: ${PORTAL_IMA_API_KEY:}
+      knowledge-base-id: ${PORTAL_IMA_KNOWLEDGE_BASE_ID:}
+  tools:
+    meeting-minutes:
+      enabled: ${PORTAL_MEETING_MINUTES_ENABLED:false}
+      xfyun-app-id: ${PORTAL_XFYUN_APP_ID:}
+      xfyun-secret-key: ${PORTAL_XFYUN_SECRET_KEY:}
+      ai-base-url: ${PORTAL_AI_BASE_URL:}
+      ai-key: ${PORTAL_AI_KEY:}
+      ai-model: ${PORTAL_AI_MODEL:deepseek-flash}
+      max-file-size-mb: ${PORTAL_MEETING_MINUTES_MAX_FILE_SIZE_MB:200}
+logging:
+  file:
+    name: ${PORTAL_LOG_FILE:${catalina.base:./logs}/logs/sp-ai-portal/application.log}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

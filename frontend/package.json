@@ -1,0 +1,46 @@
+{
+  "name": "sp-ai-portal",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "sync:capabilities": "python ../scripts/sync_capability_catalog.py --write",
+    "pretest": "python ../scripts/sync_capability_catalog.py --check",
+    "test": "node --test test/*.test.mjs",
+    "predev": "python ../scripts/sync_capability_catalog.py --check",
+    "preview:api": "node scripts/feature-preview-server.mjs",
+    "start": "node scripts/public-demo-server.mjs",
+    "dev": "vite --host 0.0.0.0",
+    "prebuild": "python ../scripts/sync_capability_catalog.py --check",
+    "build": "vue-tsc -b && vite build",
+    "build:demo": "vue-tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "pretypecheck": "python ../scripts/sync_capability_catalog.py --check",
+    "typecheck": "vue-tsc -b"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.7.9",
+    "docx": "^9.7.1",
+    "dompurify": "^3.4.14",
+    "element-plus": "^2.8.8",
+    "html2pdf.js": "^0.14.0",
+    "mammoth": "^1.12.1",
+    "marked": "^18.0.11",
+    "pdfjs-dist": "^6.2.108",
+    "pinia": "^2.3.0",
+    "tesseract.js": "^7.0.0",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/turndown": "^5.0.6",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.5",
+    "vue-tsc": "^2.2.0"
+  },
+  "packageManager": "pnpm@9.3.0"
+}

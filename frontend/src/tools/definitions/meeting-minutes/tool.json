@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "tool",
+  "id": "meeting-minutes",
+  "slug": "meeting-minutes",
+  "name": "会议纪要生成器",
+  "tagline": "上传真实会议录音，经平台受控转写和模型整理后形成可编辑纪要",
+  "description": "从会议录音中提取摘要、讨论事项、决策与行动项，并在人工确认后生成标准会议纪要。",
+  "accent": "#6d28d9",
+  "icon": "headset",
+  "version": "2026.08.25",
+  "updatedAt": "2026-08-25",
+  "maintainer": "平台工具接入组",
+  "maturity": "实物接入",
+  "tags": ["录音转写", "决策提取", "行动项", "人工确认"],
+  "metrics": [
+    { "value": "4", "label": "处理阶段" },
+    { "value": "5", "label": "质检维度" },
+    { "value": "3", "label": "输出格式" }
+  ],
+  "inputs": [
+    { "name": "会议录音", "detail": "MP3、WAV、M4A 或 MP4 录音文件", "formats": "MP3 / WAV / M4A / MP4" },
+    { "name": "会议背景", "detail": "会议主题、参会人员、项目背景和纪要模板", "formats": "表单信息" }
+  ],
+  "outputs": [
+    { "name": "会议纪要", "detail": "会议摘要、重点讨论事项、已形成决策和行动项", "formats": "Word / Markdown / PDF" },
+    { "name": "人工确认清单", "detail": "责任人、截止日期、决策原文等必须确认的字段", "formats": "结构化清单" }
+  ],
+  "qualityChecks": ["材料", "格式", "内容", "语境", "安全与合规"],
+  "boundaries": [
+    "提交后录音将由平台后端临时接收，并发送至平台配置的讯飞转写服务。",
+    "转写文本将发送至平台配置的 OpenAI 兼容模型；涉密或敏感会议不得使用在线模式。",
+    "录音临时文件在任务结束后删除，任务结果只短时保留；正式归档须由用户主动下载。",
+    "责任人、截止日期和最终决策必须人工确认后才能导出。"
+  ],
+  "deployment": {
+    "available": true,
+    "modes": ["本地部署"],
+    "environment": "公司批准的本地或内网环境",
+    "guide": "下载能力包后，按部署手册配置转写服务、模型、存储和清理策略。"
+  },
+  "trial": {
+    "enabled": true,
+    "mode": "sandbox-upload",
+    "prototype": false,
+    "actualFileTransfer": true,
+    "acceptedExtensions": ["mp3", "wav", "m4a", "mp4", "aac", "ogg", "flac", "amr", "wma"],
+    "maxFileSizeMB": 200,
+    "retentionHours": 0,
+    "processingLocation": "平台后端临时处理，并调用已配置的外部服务",
+    "externalProviders": ["讯飞录音文件转写", "平台配置的 OpenAI 兼容模型"],
+    "requireHumanReview": true,
+    "resultWatermark": "机器生成，须人工确认后使用",
+    "steps": ["文件接收", "录音转写", "内容提取", "人工确认"],
+    "templates": ["通用会议", "周会（进展同步）", "项目评审", "需求评审", "自定义"],
+    "sample": {
+      "fileName": "华南交付平台需求评审会.m4a",
+      "subject": "华南交付平台需求评审会",
+      "attendees": "产品负责人、交付代表、研发代表、安全质检人",
+      "background": "讨论公司级 AI 能力平台的定位、首批功能和试点范围。",
+      "template": "项目例会"
+    },
+    "qualityDimensions": [
+      { "name": "材料", "status": "通过", "detail": "平台样例与会议背景完整" },
+      { "name": "格式", "status": "通过", "detail": "纪要结构符合项目例会模板" },
+      { "name": "内容", "status": "待确认", "detail": "2 项行动项需要确认责任人" },
+      { "name": "语境", "status": "通过", "detail": "已识别能力平台与本地部署语境" },
+      { "name": "安全合规", "status": "提示", "detail": "正式录音应在本地部署版本处理" }
+    ]
+  },
+  "runtime": {
+    "renderer": "custom",
+    "executionMode": "server-job",
+    "route": "/tools/meeting-minutes",
+    "fileLimitMB": 200,
+    "securityStatement": "录音会提交至平台后端并调用已配置的转写和模型服务，使用前必须确认数据边界。",
+    "supportNotes": [],
+    "operations": []
+  }
+}

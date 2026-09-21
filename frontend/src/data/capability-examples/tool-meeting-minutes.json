@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "2.0",
+  "kind": "tool",
+  "identity": {
+    "slug": "meeting-minutes",
+    "name": "会议纪要生成器",
+    "tagline": "上传真实会议录音，经受控转写和模型整理后形成可编辑纪要",
+    "description": "从会议录音中提取摘要、讨论事项、决策和行动项，并在人工确认后生成标准会议纪要。",
+    "version": "2026.08.25",
+    "maintainer": "平台工具接入组",
+    "updatedAt": "2026-08-25",
+    "accent": "#6d28d9"
+  },
+  "classification": {
+    "stageIds": [0],
+    "tags": ["录音转写", "决策提取", "行动项", "人工确认"],
+    "audiences": ["项目经理", "会议组织者", "交付团队"]
+  },
+  "usage": {
+    "scenarios": ["项目例会、需求评审或专题会议后整理正式纪要", "从长录音中提取决策和待办并交由参会人确认"],
+    "inputs": [
+      { "name": "会议录音", "detail": "真实会议录音或视频文件", "formats": ["MP3", "WAV", "M4A", "MP4"] },
+      { "name": "会议背景", "detail": "会议主题、参会人员、项目背景和纪要模板", "formats": ["表单"] }
+    ],
+    "outputs": [
+      { "name": "会议纪要", "detail": "会议摘要、讨论事项、决策和行动项", "formats": ["Word", "Markdown", "PDF"] },
+      { "name": "会议转写文本", "detail": "供人工核对纪要内容的转写原文", "formats": ["文本"] }
+    ],
+    "workflow": [
+      { "title": "提交录音", "detail": "选择录音并在上传前确认数据边界。" },
+      { "title": "录音转写", "detail": "平台后端调用已配置的转写服务。" },
+      { "title": "纪要整理", "detail": "模型严格基于转写结果提取结构化内容。" },
+      { "title": "人工确认", "detail": "确认决策、责任人和截止时间后再导出。" }
+    ],
+    "quickStart": ["确认录音不含禁止上传的敏感信息", "补充主题和参会人员后提交", "对照转写原文确认纪要", "下载并按正式流程归档"]
+  },
+  "quality": {
+    "dimensions": [
+      { "name": "材料", "criteria": "录音可识别且会议信息足以理解语境", "evidence": "文件信息和用户填写的会议背景" },
+      { "name": "内容", "criteria": "摘要、决策和行动项能够追溯到转写原文", "evidence": "转写文本与人工修改记录" },
+      { "name": "安全与合规", "criteria": "上传范围、外部服务和留存规则已向用户说明", "evidence": "提交确认和任务处理记录" }
+    ],
+    "humanReview": ["责任人和截止时间必须人工确认", "最终决策必须与参会人员确认", "正式归档前必须复核转写错误"],
+    "boundaries": ["涉密或禁止传至外部服务的会议不得使用在线模式", "机器生成结果不能直接视为正式会议结论"]
+  },
+  "delivery": {
+    "mode": "hybrid",
+    "package": {
+      "environment": "公司批准的本地或内网环境",
+      "installGuide": "按部署说明配置转写服务、模型、存储和清理策略。",
+      "packageItems": [
+        { "name": "后端服务", "detail": "文件接收、转写、模型调用和任务状态接口" },
+        { "name": "部署说明", "detail": "环境变量、依赖、数据流和上线检查" }
+      ]
+    },
+    "online": {
+      "enabled": false,
+      "route": "/tools/meeting-minutes",
+      "acceptedExtensions": ["mp3", "wav", "m4a", "mp4", "aac", "ogg", "flac", "amr", "wma"],
+      "maxFileSizeMB": 200,
+      "processingLocation": "平台后端临时处理，并调用已配置的外部服务",
+      "externalProviders": ["讯飞录音文件转写", "平台配置的 OpenAI 兼容模型"],
+      "retentionPolicy": "录音任务结束后删除，任务结果在进程内短时保留",
+      "dataNotice": "提交后录音和转写文本会发送至页面列明的外部服务"
+    }
+  },
+  "governance": { "status": "IN_REVIEW", "changeNote": "由独立实物工具迁移至平台统一接入" },
+  "references": { "manual": "docs/MEETING-MINUTES-INTEGRATION.md" }
+}

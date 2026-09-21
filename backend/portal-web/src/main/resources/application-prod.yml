@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: ${PORTAL_PG_URL:jdbc:postgresql://127.0.0.1:5432/sp_ai_portal}
+    username: ${PORTAL_PG_USERNAME:sp_ai_portal}
+    password: ${PORTAL_PG_PASSWORD:}
+  data:
+    mongodb:
+      uri: ${PORTAL_MONGODB_URI:mongodb://127.0.0.1:27017/sp_ai_portal}

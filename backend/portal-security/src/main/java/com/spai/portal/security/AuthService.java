@@ -1,0 +1,17 @@
+package com.spai.portal.security;
+
+import java.nio.charset.StandardCharsets; import java.security.MessageDigest; import java.time.OffsetDateTime; import java.util.*;
+import com.spai.portal.common.BusinessException; import com.spai.portal.organization.domain.*; import com.spai.portal.organization.repository.*;
+import org.springframework.beans.factory.annotation.Value; import org.springframework.http.HttpStatus; import org.springframework.security.authentication.*; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.AuthenticationException;
+
+@Service public class AuthService {
+    private final AuthenticationManager auth; private final JwtService jwt; private final RefreshTokenRepository tokens; private final AppUserRepository users; private final long refreshSeconds;
+    public AuthService(AuthenticationManager auth,JwtService jwt,RefreshTokenRepository tokens,AppUserRepository users,@Value("${portal.jwt.refresh-seconds:604800}")long refreshSeconds){this.auth=auth;this.jwt=jwt;this.tokens=tokens;this.users=users;this.refreshSeconds=refreshSeconds;}
+    @Transactional(noRollbackFor=BusinessException.class) public Tokens login(String username,String password){try{PortalPrincipal p=(PortalPrincipal)auth.authenticate(new UsernamePasswordAuthenticationToken(username,password)).getPrincipal();AppUser user=users.findByUsername(username).orElse(null);if(user!=null&&(user.getFailedAttempts()!=0||user.getLockedUntil()!=null)){user.setFailedAttempts(0);user.setLockedUntil(null);users.save(user);}return issue(p);}catch(AuthenticationException e){users.findByUsername(username).ifPresent(user->{int attempts=user.getFailedAttempts()+1;user.setFailedAttempts(attempts);if(attempts>=5)user.setLockedUntil(OffsetDateTime.now().plusMinutes(15));users.save(user);});throw new BusinessException("BAD_CREDENTIALS","用户名或密码错误",HttpStatus.UNAUTHORIZED);}}
+    @Transactional public Tokens refresh(String raw){RefreshToken old=tokens.findByTokenHash(hash(raw)).filter(t->t.getRevokedAt()==null&&t.getExpiresAt().isAfter(OffsetDateTime.now())).orElseThrow(()->new BusinessException("INVALID_REFRESH_TOKEN","登录已过期",HttpStatus.UNAUTHORIZED));old.setRevokedAt(OffsetDateTime.now());tokens.save(old);return issue(new PortalPrincipal(users.findById(old.getUserId()).orElseThrow(()->BusinessException.notFound("用户不存在"))));}
+    @Transactional public void logout(String raw){if(raw!=null)tokens.findByTokenHash(hash(raw)).ifPresent(t->{t.setRevokedAt(OffsetDateTime.now());tokens.save(t);});}
+    private Tokens issue(PortalPrincipal p){String raw=UUID.randomUUID().toString()+UUID.randomUUID().toString();RefreshToken t=new RefreshToken();t.setId(UUID.randomUUID().toString());t.setUserId(p.getUserId());t.setTokenHash(hash(raw));t.setExpiresAt(OffsetDateTime.now().plusSeconds(refreshSeconds));tokens.save(t);return new Tokens(jwt.issue(p),raw,p);}
+    private String hash(String value){try{byte[] bytes=MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));StringBuilder b=new StringBuilder();for(byte v:bytes)b.append(String.format("%02x",v));return b.toString();}catch(Exception e){throw new IllegalStateException(e);}}
+    public static class Tokens {public final String accessToken;public final String refreshToken;public final PortalPrincipal principal;Tokens(String a,String r,PortalPrincipal p){accessToken=a;refreshToken=r;principal=p;}}
+}

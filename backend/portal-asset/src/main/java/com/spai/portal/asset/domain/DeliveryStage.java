@@ -1,0 +1,3 @@
+package com.spai.portal.asset.domain;
+import javax.persistence.*;
+@Entity @Table(name="delivery_stage") public class DeliveryStage {@Id private Integer id;@Column(nullable=false)private String name;private String description;@Column(name="sort_order",nullable=false)private int sortOrder;public Integer getId(){return id;}public void setId(Integer id){this.id=id;}public String getName(){return name;}public void setName(String name){this.name=name;}public String getDescription(){return description;}public void setDescription(String description){this.description=description;}public int getSortOrder(){return sortOrder;}public void setSortOrder(int sortOrder){this.sortOrder=sortOrder;}}

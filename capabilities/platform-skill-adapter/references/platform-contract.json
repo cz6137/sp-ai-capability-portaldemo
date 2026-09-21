@@ -1,0 +1,12 @@
+{
+  "executors": [
+    "markdown-to-docx",
+    "markdown-to-pdf",
+    "docx-to-markdown",
+    "pdf-to-markdown",
+    "image-to-markdown"
+  ],
+  "handlers": [
+    "meeting-minutes-v1"
+  ]
+}

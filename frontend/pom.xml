@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.spai</groupId>
+    <artifactId>sp-ai-portal-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../backend/pom.xml</relativePath>
+  </parent>
+  <artifactId>sp-ai-portal-web</artifactId>
+  <packaging>war</packaging>
+  <name>SP AI Portal Frontend</name>
+
+  <build>
+    <finalName>sp-ai-portal-web</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.2</version>
+        <configuration>
+          <warSourceDirectory>${project.basedir}/src/main/webapp</warSourceDirectory>
+          <webResources>
+            <resource>
+              <directory>${project.basedir}/dist</directory>
+            </resource>
+          </webResources>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

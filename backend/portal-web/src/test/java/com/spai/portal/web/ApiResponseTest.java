@@ -1,0 +1,1 @@
+package com.spai.portal.web;import com.spai.portal.common.ApiResponse;import org.junit.jupiter.api.Test;import static org.assertj.core.api.Assertions.assertThat;class ApiResponseTest{@Test void successEnvelopeHasStableCode(){ApiResponse<String>response=ApiResponse.ok("value");assertThat(response.getCode()).isEqualTo("OK");assertThat(response.getData()).isEqualTo("value");}}

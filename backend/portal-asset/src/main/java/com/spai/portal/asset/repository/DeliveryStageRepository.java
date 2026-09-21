@@ -1,0 +1,1 @@
+package com.spai.portal.asset.repository; import com.spai.portal.asset.domain.DeliveryStage;import java.util.List;import org.springframework.data.jpa.repository.JpaRepository; public interface DeliveryStageRepository extends JpaRepository<DeliveryStage,Integer>{List<DeliveryStage> findAllByOrderBySortOrderAsc();}

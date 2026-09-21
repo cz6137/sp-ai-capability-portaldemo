@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "xfyunAppId": "",
+  "xfyunSecretKey": "",
+  "aiBaseUrl": "",
+  "aiKey": "",
+  "aiModel": "deepseek-flash",
+  "maxFileSizeMb": 25
+}

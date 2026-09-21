@@ -1,0 +1,323 @@
+{
+  "generated": {
+    "source": "capabilities/meeting-minutes/capability.json",
+    "packageContentSha256": "4ba1ebf1430322e1f82d7feb7582e48a8b711f813e10fcaf9d5b7008b79c6ce2"
+  },
+  "manifest": {
+    "schemaVersion": "2.1",
+    "kind": "tool",
+    "identity": {
+      "slug": "meeting-minutes",
+      "name": "中文语音转写与会议纪要",
+      "tagline": "上传会议录音，可仅生成中文转写文本，也可继续整理为可编辑纪要",
+      "description": "同一个工具提供两种处理方式：仅将中文语音转为可校对文本，或在转写后进一步提取会议摘要、讨论事项、决策和行动项。",
+      "version": "1.1.0",
+      "maintainer": "平台工具接入组",
+      "updatedAt": "2026-09-16",
+      "accent": "#6d28d9"
+    },
+    "classification": {
+      "stageIds": [
+        0
+      ],
+      "tags": [
+        "录音转写",
+        "决策提取",
+        "行动项",
+        "人工确认"
+      ],
+      "audiences": [
+        "项目经理",
+        "会议组织者",
+        "交付团队"
+      ]
+    },
+    "usage": {
+      "scenarios": [
+        "项目例会、需求评审或专题会议后整理正式纪要",
+        "从长录音中提取决策和待办并交由参会人确认",
+        "只需要将访谈、会议或口述录音转为可继续编辑的中文文本"
+      ],
+      "inputs": [
+        {
+          "name": "会议录音",
+          "detail": "真实会议录音或视频文件",
+          "formats": [
+            "MP3",
+            "WAV",
+            "M4A",
+            "MP4"
+          ]
+        },
+        {
+          "name": "会议背景",
+          "detail": "会议主题、参会人员、项目背景和纪要模板",
+          "formats": [
+            "表单"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "会议纪要",
+          "detail": "会议摘要、讨论事项、决策和行动项",
+          "formats": [
+            "Word 兼容 .doc",
+            "Markdown",
+            "浏览器打印 PDF"
+          ]
+        },
+        {
+          "name": "会议转写文本",
+          "detail": "供人工核对纪要内容的转写原文",
+          "formats": [
+            "文本"
+          ]
+        }
+      ],
+      "workflow": [
+        {
+          "title": "提交录音",
+          "detail": "选择录音并在上传前确认数据边界。"
+        },
+        {
+          "title": "录音转写",
+          "detail": "平台后端调用已配置的转写服务。"
+        },
+        {
+          "title": "选择后续处理",
+          "detail": "仅转写时直接进入人工校对；生成纪要时再由模型基于转写提取结构化内容。"
+        },
+        {
+          "title": "人工确认",
+          "detail": "确认决策、责任人和截止时间后再导出。"
+        }
+      ],
+      "quickStart": [
+        "确认录音不含禁止上传的敏感信息",
+        "补充主题和参会人员后提交",
+        "对照转写原文确认纪要",
+        "下载并按正式流程归档"
+      ],
+      "triggers": [
+        "从统一能力目录打开工具，选择输入和处理方式"
+      ]
+    },
+    "quality": {
+      "dimensions": [
+        {
+          "name": "材料",
+          "criteria": "录音可识别且会议信息足以理解语境",
+          "evidence": "文件信息和用户填写的会议背景"
+        },
+        {
+          "name": "内容",
+          "criteria": "摘要、决策和行动项能够追溯到转写原文",
+          "evidence": "转写文本与人工修改记录"
+        },
+        {
+          "name": "安全与合规",
+          "criteria": "上传范围、外部服务和留存规则已向用户说明",
+          "evidence": "提交确认和任务处理记录"
+        }
+      ],
+      "humanReview": [
+        "责任人和截止时间必须人工确认",
+        "最终决策必须与参会人员确认",
+        "正式归档前必须复核转写错误"
+      ],
+      "boundaries": [
+        "涉密或禁止传至外部服务的会议不得使用在线模式",
+        "机器生成结果不能直接视为正式会议结论",
+        "平台适配版尚未完成真实业务验收；默认在中文工作环境使用，引用资料及资源授权由维护人确认。"
+      ],
+      "warnings": [
+        {
+          "text": "错误结果不能替代生成结果，任务失败需保留错误类别并在合规范围内排查。",
+          "source": {
+            "file": "manual.md",
+            "line": 5
+          }
+        },
+        {
+          "text": "当前任务在进程内保存，进程重启不保留，过期清理由后续请求触发，不能视作持久任务系统。",
+          "source": {
+            "file": "manual.md",
+            "line": 7
+          }
+        },
+        {
+          "text": "原始手册中的版本、历史统计或业务示例只描述原来源，不代表平台已发布、已验证或已获得资源再分发许可。",
+          "source": {
+            "file": "SOURCES.md",
+            "line": 9
+          }
+        },
+        {
+          "text": "以下检查不能用预置结果替代。",
+          "source": {
+            "file": "examples/acceptance.md",
+            "line": 3
+          }
+        },
+        {
+          "text": "2. 真实录音经过 QUEUED、TRANSCRIBING、GENERATING、COMPLETED；状态读取失败可说明中断，不能假报完成。",
+          "source": {
+            "file": "examples/acceptance.md",
+            "line": 6
+          }
+        },
+        {
+          "text": "现有下载提供 Word 兼容的 HTML .doc、Markdown，以及浏览器打印另存 PDF；尚不是原生 DOCX 导出。",
+          "source": {
+            "file": "manual.md",
+            "line": 7
+          }
+        },
+        {
+          "text": "不能独立运行或作为最终 WAR。",
+          "source": {
+            "file": "manual.md",
+            "line": 9
+          }
+        }
+      ]
+    },
+    "delivery": {
+      "mode": "hybrid",
+      "online": {
+        "enabled": false,
+        "route": "/tools/meeting-minutes",
+        "acceptedExtensions": [
+          "mp3",
+          "wav",
+          "m4a",
+          "mp4",
+          "aac",
+          "ogg",
+          "flac",
+          "amr",
+          "wma"
+        ],
+        "maxFileSizeMB": 200,
+        "processingLocation": "平台后端临时处理，并调用已配置的外部服务",
+        "externalProviders": [
+          "讯飞录音文件转写",
+          "平台配置的 OpenAI 兼容模型"
+        ],
+        "retentionPolicy": "录音在任务结束清理；任务结果在进程内保留，过期清理由后续请求触发，重启不保留。",
+        "dataNotice": "提交后录音和转写文本会发送至页面列明的外部服务"
+      },
+      "package": {
+        "environment": "现有 Java＋Vue 平台集成环境，源码附件不是独立部署物",
+        "installGuide": "先读 manual.md 和 SOURCE-FILES.json，将明确列出的源码与现有平台集成；不自动部署。运行能力以平台实际注册和服务状态为准。",
+        "packageItems": [
+          {
+            "name": "manual.md"
+          },
+          {
+            "name": "SOURCES.md"
+          },
+          {
+            "name": "CHANGELOG.md"
+          },
+          {
+            "name": "examples/acceptance.md"
+          }
+        ]
+      }
+    },
+    "governance": {
+      "status": "DRAFT",
+      "changeNote": "2026.09.16 合并中文语音转文字：用户可选择仅转写，或转写后继续生成结构化会议纪要。"
+    },
+    "references": {
+      "manual": "manual.md",
+      "changelog": "CHANGELOG.md"
+    },
+    "provenance": [
+      {
+        "path": "/quality/warnings/0",
+        "status": "EXTRACTED",
+        "source": {
+          "file": "manual.md",
+          "line": 5,
+          "quote": "错误结果不能替代生成结果，任务失败需保留错误类别并在合规范围内排查。"
+        }
+      },
+      {
+        "path": "/quality/warnings/1",
+        "status": "EXTRACTED",
+        "source": {
+          "file": "manual.md",
+          "line": 7,
+          "quote": "当前任务在进程内保存，进程重启不保留，过期清理由后续请求触发，不能视作持久任务系统。"
+        }
+      },
+      {
+        "path": "/quality/warnings/2",
+        "status": "EXTRACTED",
+        "source": {
+          "file": "SOURCES.md",
+          "line": 9,
+          "quote": "原始手册中的版本、历史统计或业务示例只描述原来源，不代表平台已发布、已验证或已获得资源再分发许可。"
+        }
+      },
+      {
+        "path": "/quality/warnings/3",
+        "status": "EXTRACTED",
+        "source": {
+          "file": "examples/acceptance.md",
+          "line": 3,
+          "quote": "以下检查不能用预置结果替代。"
+        }
+      },
+      {
+        "path": "/quality/warnings/4",
+        "status": "EXTRACTED",
+        "source": {
+          "file": "examples/acceptance.md",
+          "line": 6,
+          "quote": "2. 真实录音经过 QUEUED、TRANSCRIBING、GENERATING、COMPLETED；状态读取失败可说明中断，不能假报完成。"
+        }
+      },
+      {
+        "path": "/quality/warnings/5",
+        "status": "EXTRACTED",
+        "source": {
+          "file": "manual.md",
+          "line": 7,
+          "quote": "现有下载提供 Word 兼容的 HTML .doc、Markdown，以及浏览器打印另存 PDF；尚不是原生 DOCX 导出。"
+        }
+      },
+      {
+        "path": "/quality/warnings/6",
+        "status": "EXTRACTED",
+        "source": {
+          "file": "manual.md",
+          "line": 9,
+          "quote": "不能独立运行或作为最终 WAR。"
+        }
+      }
+    ],
+    "runtime": {
+      "renderer": "server-job",
+      "executionMode": "server-job",
+      "handler": "meeting-minutes-v1",
+      "route": "/tools/meeting-minutes",
+      "fileLimitMB": 200,
+      "securityStatement": "录音会提交至平台后端并调用已配置的转写和模型服务，使用前必须确认数据边界。",
+      "supportNotes": [
+        "本适配版为待审核草稿；管理页可预览，不代表正式开放。"
+      ],
+      "templates": [
+        "通用会议",
+        "周会（进展同步）",
+        "项目评审",
+        "需求评审",
+        "自定义"
+      ],
+      "operations": []
+    }
+  }
+}
